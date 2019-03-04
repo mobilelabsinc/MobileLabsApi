@@ -15,9 +15,18 @@ namespace MobileLabs.DeviceConnect.RestApi
 {
     public class MobileLabsApi
     {
+        private static readonly JsonSerializerSettings _jsonSettings =
+            new JsonSerializerSettings();
+
         private readonly string _username;
         private readonly string _apikey;
         private readonly Uri _serveruri;
+
+        static MobileLabsApi()
+        {
+            _jsonSettings.Converters.Add(
+                TimeSpanAsMillisecondsConverter.Converter);
+        }
 
         public MobileLabsApi(string username, string apikey, string serveraddress)
         {
@@ -230,6 +239,69 @@ namespace MobileLabs.DeviceConnect.RestApi
             }
         }
 
+        private static Dictionary<string, string> CompressArguments(
+            IReadOnlyCollection<KeyValuePair<string, string>> arguments,
+            Dictionary<string, string> content)
+        {
+            var form = new Dictionary<string, string>();
+
+            if (content != null)
+            {
+                foreach (var kv in content)
+                {
+                    form[kv.Key] = kv.Value;
+                }
+            }
+
+            if (arguments != null)
+            {
+                foreach (var kv in arguments)
+                {
+                    form[kv.Key] = kv.Value;
+                }
+            }
+
+            return form;
+        }
+
+        public async Task<TOut> RequestJsonAsync<TOut>(string url,
+            IReadOnlyCollection<KeyValuePair<string, string>> arguments,
+            Dictionary<string, string> content,
+            bool isAsync,
+            CancellationToken cancel)
+        {
+            var form = CompressArguments(arguments, content);
+
+            using (var client = new HttpClient())
+            using (cancel.Register(DisposeHttpClient, client))
+            {
+                AddAuth(client);
+
+                using (var response = await client
+                    .GetAsync(CleanUrl(url, form), cancel))
+                {
+                    return await HandleJsonResponseAsync<TOut>(
+                        response, isAsync, cancel);
+                }
+            }
+        }
+
+        public TOut RequestJson<TOut>(string url,
+            IReadOnlyCollection<KeyValuePair<string, string>> arguments,
+            Dictionary<string, string> content,
+            bool isAsync)
+        {
+            var form = CompressArguments(arguments, content);
+            var client = (HttpWebRequest)WebRequest
+                .Create(BaseUrl(url, form));
+            AddAuth(client);
+
+            using (var response = (HttpWebResponse)client.GetResponse())
+            {
+                return HandleJsonResponse<TOut>(response, isAsync);
+            }
+        }
+
         public async Task<T> PostFileAsync<T>(
             string url, string filename, bool isAsync, CancellationToken cancel)
         {
@@ -387,7 +459,7 @@ namespace MobileLabs.DeviceConnect.RestApi
                 return (T)(object)input;
             }
 
-            return JsonConvert.DeserializeObject<T>(input);
+            return JsonConvert.DeserializeObject<T>(input, _jsonSettings);
         }
 
         private void AddAuth(HttpClient client)
@@ -487,5 +559,42 @@ namespace MobileLabs.DeviceConnect.RestApi
             return Uri.EscapeDataString(data).Replace("%20", "+");
         }
         #endregion
+    }
+
+    public class TimeSpanAsMillisecondsConverter : JsonConverter
+    {
+        public static readonly TimeSpanAsMillisecondsConverter Converter =
+            new TimeSpanAsMillisecondsConverter();
+
+        public override void WriteJson(JsonWriter writer,
+            object value, JsonSerializer serializer)
+        {
+            var ts = value is TimeSpan?
+                ? (TimeSpan?)value
+                : null;
+
+            var asString = ts.HasValue
+                ? ts.Value.TotalMilliseconds
+                : 0;
+
+            serializer.Serialize(writer, asString);
+        }
+
+        public override object ReadJson(JsonReader reader,
+            Type objectType, object existingValue,
+            JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+
+            var value = serializer.Deserialize<double>(reader);
+            return TimeSpan.FromMilliseconds(value);
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(TimeSpan) ||
+                objectType == typeof(TimeSpan?);
+        }
     }
 }

@@ -1,3 +1,5 @@
+ // This is a generated file. Do not modify directly.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,25 +13,22 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
 {
     public static class DeviceEndPoints
     {
-        public static Task<Device[]> GetDeviceAsync(this MobileLabsApi api, bool? properties, bool? applications, CancellationToken cancel)
+
+        public static Task<Device[]> GetDeviceAsync(this MobileLabsApi api, bool? properties, bool? applications, Dictionary<string, string> propertiesQuery, CancellationToken cancel)
         {
-            return api.RequestAsync<Device[]>("/Device",
+            if (propertiesQuery == null)
+            {
+                throw new ArgumentNullException("propertiesQuery");
+            }
+
+            return api.RequestJsonAsync<Device[]>("/Device",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("get", ""),
                     new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
                     new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
                 },
+                propertiesQuery,
                 false, cancel);
-        }
-
-        public static Device[] GetDevice(this MobileLabsApi api, bool? properties, bool? applications)
-        {
-            return api.Request<Device[]>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
-                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
-                }, false);
         }
 
         public static Task<Device[]> GetDeviceAsync(this MobileLabsApi api, CancellationToken cancel)
@@ -41,12 +40,42 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static Device[] GetDevice(this MobileLabsApi api)
+        public static Task<Device[]> GetDeviceAsync(this MobileLabsApi api, bool? properties, bool? applications, CancellationToken cancel)
         {
-            return api.Request<Device[]>("/Device",
+            return api.RequestAsync<Device[]>("/Device",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("get", ""),
-                }, false);
+                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
+                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
+                },
+                false, cancel);
+        }
+
+
+        public static Task<Device[]> GetDeviceAvailableAsync(this MobileLabsApi api, bool? properties, bool? applications, Dictionary<string, string> propertiesQuery, CancellationToken cancel)
+        {
+            if (propertiesQuery == null)
+            {
+                throw new ArgumentNullException("propertiesQuery");
+            }
+
+            return api.RequestJsonAsync<Device[]>("/Device/Available",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
+                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
+                },
+                propertiesQuery,
+                false, cancel);
+        }
+
+        public static Task<Device[]> GetDeviceAvailableAsync(this MobileLabsApi api, CancellationToken cancel)
+        {
+            return api.RequestAsync<Device[]>("/Device/Available",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                },
+                false, cancel);
         }
 
         public static Task<Device[]> GetDeviceAvailableAsync(this MobileLabsApi api, bool? properties, bool? applications, CancellationToken cancel)
@@ -60,33 +89,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static Device[] GetDeviceAvailable(this MobileLabsApi api, bool? properties, bool? applications)
-        {
-            return api.Request<Device[]>("/Device/Available",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
-                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
-                }, false);
-        }
-
-        public static Task<Device[]> GetDeviceAvailableAsync(this MobileLabsApi api, CancellationToken cancel)
-        {
-            return api.RequestAsync<Device[]>("/Device/Available",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                },
-                false, cancel);
-        }
-
-        public static Device[] GetDeviceAvailable(this MobileLabsApi api)
-        {
-            return api.Request<Device[]>("/Device/Available",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                }, false);
-        }
-
         public static Task<OperationResult<string>> GetDeviceLogAsync(this MobileLabsApi api, string id, CancellationToken cancel)
         {
             return api.RequestAsync<OperationResult<string>>("/Device/Log",
@@ -95,15 +97,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("id", id),
                 },
                 false, cancel);
-        }
-
-        public static OperationResult<string> GetDeviceLog(this MobileLabsApi api, string id)
-        {
-            return api.Request<OperationResult<string>>("/Device/Log",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                    new KeyValuePair<string, string>("id", id),
-                }, false);
         }
 
         public static Task<OperationResult<string>> GetDeviceAppiumLogAsync(this MobileLabsApi api, string id, bool? currentSessionOnly, CancellationToken cancel)
@@ -117,16 +110,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static OperationResult<string> GetDeviceAppiumLog(this MobileLabsApi api, string id, bool? currentSessionOnly)
-        {
-            return api.Request<OperationResult<string>>("/Device/AppiumLog",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                    new KeyValuePair<string, string>("id", id),
-                    new KeyValuePair<string, string>("currentSessionOnly", currentSessionOnly == null ? null : currentSessionOnly.ToString()),
-                }, false);
-        }
-
         public static Task<OperationResult<string>> GetDeviceAppiumLogAsync(this MobileLabsApi api, string id, CancellationToken cancel)
         {
             return api.RequestAsync<OperationResult<string>>("/Device/AppiumLog",
@@ -135,15 +118,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("id", id),
                 },
                 false, cancel);
-        }
-
-        public static OperationResult<string> GetDeviceAppiumLog(this MobileLabsApi api, string id)
-        {
-            return api.Request<OperationResult<string>>("/Device/AppiumLog",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("get", ""),
-                    new KeyValuePair<string, string>("id", id),
-                }, false);
         }
 
         public static Task<OperationResult> DeleteDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
@@ -156,21 +130,12 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static OperationResult DeleteDevice(this MobileLabsApi api, string id)
-        {
-            return api.Post<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("delete", ""),
-                    new KeyValuePair<string, string>("id", id),
-                }, false);
-        }
 
-
-        public static Task<OperationResult> UpdateDeviceAsync(this MobileLabsApi api, string id, Dictionary<string, string> properties, CancellationToken cancel)
+        public static Task<OperationResult> UpdateDeviceAsync(this MobileLabsApi api, string id, Dictionary<string, string> propertiesQuery, CancellationToken cancel)
         {
-            if (properties == null)
+            if (propertiesQuery == null)
             {
-                throw new ArgumentNullException("properties");
+                throw new ArgumentNullException("propertiesQuery");
             }
 
             return api.PostJsonAsync<OperationResult, Dictionary<string, string>>("/Device",
@@ -178,25 +143,8 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
                 },
-                properties,
+                propertiesQuery,
                 false, cancel);
-        }
-
-
-        public static OperationResult UpdateDevice(this MobileLabsApi api, string id, Dictionary<string, string> properties)
-        {
-            if (properties == null)
-            {
-                throw new ArgumentNullException("properties");
-            }
-
-            return api.PostJson<OperationResult, Dictionary<string, string>>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("update", ""),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                properties
-                , false);
         }
 
         public static Task<OperationResult> UpdateDeviceUsbPortAsync(this MobileLabsApi api, string id, string usbHubPortState, CancellationToken cancel)
@@ -208,16 +156,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("usbHubPortState", usbHubPortState),
                 },
                 false, cancel);
-        }
-
-        public static OperationResult UpdateDeviceUsbPort(this MobileLabsApi api, string id, string usbHubPortState)
-        {
-            return api.Post<OperationResult>("/Device/UsbPort",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("update", ""),
-                    new KeyValuePair<string, string>("id", id),
-                    new KeyValuePair<string, string>("usbHubPortState", usbHubPortState),
-                }, false);
         }
 
         public static Task<string> GetDeviceMetricsAsync(this MobileLabsApi api, string id, string table, string aggr, string fields, string marker, int? markerLimit, int? markerOffset, int? limit, int? offset, DateTime? start, DateTime? end, string groupBy, string orderBy, string format, string filename, int? timeout, CancellationToken cancel)
@@ -275,6 +213,247 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
+        public static Task<OperationResult> StartMarkerDeviceMetricsAsync(this MobileLabsApi api, string id, string name, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device/Metrics",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "StartMarker"),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("name", name),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> StopMarkerDeviceMetricsAsync(this MobileLabsApi api, string id, string name, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device/Metrics",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "StopMarker"),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("name", name),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> EnabledDeviceMetricsAsync(this MobileLabsApi api, string id, bool enable, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device/Metrics",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Enabled"),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("enable", enable.ToString()),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> RebootDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Reboot"),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> RetainDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Retain"),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> ReleaseDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Release"),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> EnableDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Enable"),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> DisableDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Disable"),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> ResetDeviceAsync(this MobileLabsApi api, string id, bool? uninstallAll, bool? reboot, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Reset"),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("uninstallAll", uninstallAll == null ? null : uninstallAll.ToString()),
+                    new KeyValuePair<string, string>("reboot", reboot == null ? null : reboot.ToString()),
+                },
+                false, cancel);
+        }
+
+        public static Task<OperationResult> ResetDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        {
+            return api.PostAsync<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("action", "Reset"),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                false, cancel);
+        }
+
+
+        public static Device[] GetDevice(this MobileLabsApi api, bool? properties, bool? applications, Dictionary<string, string> propertiesQuery)
+        {
+            if (propertiesQuery == null)
+            {
+                throw new ArgumentNullException("propertiesQuery");
+            }
+
+            return api.RequestJson<Device[]>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
+                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
+                },
+                propertiesQuery,
+                false);
+        }
+
+        public static Device[] GetDevice(this MobileLabsApi api)
+        {
+            return api.Request<Device[]>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                }, false);
+        }
+
+        public static Device[] GetDevice(this MobileLabsApi api, bool? properties, bool? applications)
+        {
+            return api.Request<Device[]>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
+                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
+                }, false);
+        }
+
+
+        public static Device[] GetDeviceAvailable(this MobileLabsApi api, bool? properties, bool? applications, Dictionary<string, string> propertiesQuery)
+        {
+            if (propertiesQuery == null)
+            {
+                throw new ArgumentNullException("propertiesQuery");
+            }
+
+            return api.RequestJson<Device[]>("/Device/Available",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
+                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
+                },
+                propertiesQuery,
+                false);
+        }
+
+        public static Device[] GetDeviceAvailable(this MobileLabsApi api)
+        {
+            return api.Request<Device[]>("/Device/Available",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                }, false);
+        }
+
+        public static Device[] GetDeviceAvailable(this MobileLabsApi api, bool? properties, bool? applications)
+        {
+            return api.Request<Device[]>("/Device/Available",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("properties", properties == null ? null : properties.ToString()),
+                    new KeyValuePair<string, string>("applications", applications == null ? null : applications.ToString()),
+                }, false);
+        }
+
+        public static OperationResult<string> GetDeviceLog(this MobileLabsApi api, string id)
+        {
+            return api.Request<OperationResult<string>>("/Device/Log",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("id", id),
+                }, false);
+        }
+
+        public static OperationResult<string> GetDeviceAppiumLog(this MobileLabsApi api, string id, bool? currentSessionOnly)
+        {
+            return api.Request<OperationResult<string>>("/Device/AppiumLog",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("currentSessionOnly", currentSessionOnly == null ? null : currentSessionOnly.ToString()),
+                }, false);
+        }
+
+        public static OperationResult<string> GetDeviceAppiumLog(this MobileLabsApi api, string id)
+        {
+            return api.Request<OperationResult<string>>("/Device/AppiumLog",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("get", ""),
+                    new KeyValuePair<string, string>("id", id),
+                }, false);
+        }
+
+        public static OperationResult DeleteDevice(this MobileLabsApi api, string id)
+        {
+            return api.Post<OperationResult>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("delete", ""),
+                    new KeyValuePair<string, string>("id", id),
+                }, false);
+        }
+
+
+        public static OperationResult UpdateDevice(this MobileLabsApi api, string id, Dictionary<string, string> propertiesQuery)
+        {
+            if (propertiesQuery == null)
+            {
+                throw new ArgumentNullException("propertiesQuery");
+            }
+
+            return api.PostJson<OperationResult, Dictionary<string, string>>("/Device",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("update", ""),
+                    new KeyValuePair<string, string>("id", id),
+                },
+                propertiesQuery,
+                false);
+        }
+
+        public static OperationResult UpdateDeviceUsbPort(this MobileLabsApi api, string id, string usbHubPortState)
+        {
+            return api.Post<OperationResult>("/Device/UsbPort",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("update", ""),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("usbHubPortState", usbHubPortState),
+                }, false);
+        }
+
         public static string GetDeviceMetrics(this MobileLabsApi api, string id, string table, string aggr, string fields, string marker, int? markerLimit, int? markerOffset, int? limit, int? offset, DateTime? start, DateTime? end, string groupBy, string orderBy, string format, string filename, int? timeout)
         {
             return api.Request<string>("/Device/Metrics",
@@ -325,19 +504,8 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("format", deviceMetricsQuery.Format),
                     new KeyValuePair<string, string>("filename", deviceMetricsQuery.Filename),
                     new KeyValuePair<string, string>("timeout", deviceMetricsQuery.Timeout == null ? null : deviceMetricsQuery.Timeout.ToString()),
-                }
-                , false);
-        }
-
-        public static Task<OperationResult> StartMarkerDeviceMetricsAsync(this MobileLabsApi api, string id, string name, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device/Metrics",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "StartMarker"),
-                    new KeyValuePair<string, string>("id", id),
-                    new KeyValuePair<string, string>("name", name),
                 },
-                false, cancel);
+                false);
         }
 
         public static OperationResult StartMarkerDeviceMetrics(this MobileLabsApi api, string id, string name)
@@ -350,17 +518,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 }, false);
         }
 
-        public static Task<OperationResult> StopMarkerDeviceMetricsAsync(this MobileLabsApi api, string id, string name, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device/Metrics",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "StopMarker"),
-                    new KeyValuePair<string, string>("id", id),
-                    new KeyValuePair<string, string>("name", name),
-                },
-                false, cancel);
-        }
-
         public static OperationResult StopMarkerDeviceMetrics(this MobileLabsApi api, string id, string name)
         {
             return api.Post<OperationResult>("/Device/Metrics",
@@ -369,17 +526,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("id", id),
                     new KeyValuePair<string, string>("name", name),
                 }, false);
-        }
-
-        public static Task<OperationResult> EnabledDeviceMetricsAsync(this MobileLabsApi api, string id, bool enable, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device/Metrics",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Enabled"),
-                    new KeyValuePair<string, string>("id", id),
-                    new KeyValuePair<string, string>("enable", enable.ToString()),
-                },
-                false, cancel);
         }
 
         public static OperationResult EnabledDeviceMetrics(this MobileLabsApi api, string id, bool enable)
@@ -392,16 +538,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 }, false);
         }
 
-        public static Task<OperationResult> RebootDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Reboot"),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                false, cancel);
-        }
-
         public static OperationResult RebootDevice(this MobileLabsApi api, string id)
         {
             return api.Post<OperationResult>("/Device",
@@ -409,16 +545,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("action", "Reboot"),
                     new KeyValuePair<string, string>("id", id),
                 }, false);
-        }
-
-        public static Task<OperationResult> RetainDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Retain"),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                false, cancel);
         }
 
         public static OperationResult RetainDevice(this MobileLabsApi api, string id)
@@ -430,16 +556,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 }, false);
         }
 
-        public static Task<OperationResult> ReleaseDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Release"),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                false, cancel);
-        }
-
         public static OperationResult ReleaseDevice(this MobileLabsApi api, string id)
         {
             return api.Post<OperationResult>("/Device",
@@ -447,16 +563,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("action", "Release"),
                     new KeyValuePair<string, string>("id", id),
                 }, false);
-        }
-
-        public static Task<OperationResult> EnableDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Enable"),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                false, cancel);
         }
 
         public static OperationResult EnableDevice(this MobileLabsApi api, string id)
@@ -468,16 +574,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 }, false);
         }
 
-        public static Task<OperationResult> DisableDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Disable"),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                false, cancel);
-        }
-
         public static OperationResult DisableDevice(this MobileLabsApi api, string id)
         {
             return api.Post<OperationResult>("/Device",
@@ -485,18 +581,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("action", "Disable"),
                     new KeyValuePair<string, string>("id", id),
                 }, false);
-        }
-
-        public static Task<OperationResult> ResetDeviceAsync(this MobileLabsApi api, string id, bool? uninstallAll, bool? reboot, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Reset"),
-                    new KeyValuePair<string, string>("id", id),
-                    new KeyValuePair<string, string>("uninstallAll", uninstallAll == null ? null : uninstallAll.ToString()),
-                    new KeyValuePair<string, string>("reboot", reboot == null ? null : reboot.ToString()),
-                },
-                false, cancel);
         }
 
         public static OperationResult ResetDevice(this MobileLabsApi api, string id, bool? uninstallAll, bool? reboot)
@@ -508,16 +592,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("uninstallAll", uninstallAll == null ? null : uninstallAll.ToString()),
                     new KeyValuePair<string, string>("reboot", reboot == null ? null : reboot.ToString()),
                 }, false);
-        }
-
-        public static Task<OperationResult> ResetDeviceAsync(this MobileLabsApi api, string id, CancellationToken cancel)
-        {
-            return api.PostAsync<OperationResult>("/Device",
-                new KeyValuePair<string, string>[] {
-                    new KeyValuePair<string, string>("action", "Reset"),
-                    new KeyValuePair<string, string>("id", id),
-                },
-                false, cancel);
         }
 
         public static OperationResult ResetDevice(this MobileLabsApi api, string id)

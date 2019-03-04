@@ -1,3 +1,5 @@
+ // This is a generated file. Do not modify directly.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
