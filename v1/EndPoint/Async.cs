@@ -13,6 +13,12 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
 {
     public static class AsyncEndPoints
     {
+        /// <summary>
+        /// Query an async result&apos;s state. See Async for more information.
+        /// This is an async method and should only be called from an async method. For non-async code, use &apos;GetAsync&apos;.
+        /// </summary>
+        /// <param name="id">The async ID.</param>
+        /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public static Task<AsyncStatusModel> GetAsyncAsync(this MobileLabsApi api, Guid id, CancellationToken cancel)
         {
             return api.RequestAsync<AsyncStatusModel>("/Async",
@@ -23,6 +29,8 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
+        /// <summary>Query an async result&apos;s state. See Async for more information.</summary>
+        /// <param name="id">The async ID.</param>
         public static AsyncStatusModel GetAsync(this MobileLabsApi api, Guid id)
         {
             return api.Request<AsyncStatusModel>("/Async",

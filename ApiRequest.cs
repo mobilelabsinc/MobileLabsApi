@@ -18,6 +18,9 @@ namespace MobileLabs.DeviceConnect.RestApi
         private static readonly JsonSerializerSettings _jsonSettings =
             new JsonSerializerSettings();
 
+        private static readonly JsonSerializer _jsonSerializer =
+            new JsonSerializer();
+
         private readonly string _username;
         private readonly string _apikey;
         private readonly Uri _serveruri;
@@ -26,8 +29,17 @@ namespace MobileLabs.DeviceConnect.RestApi
         {
             _jsonSettings.Converters.Add(
                 TimeSpanAsMillisecondsConverter.Converter);
+
+            _jsonSerializer.Converters.Add(
+                TimeSpanAsMillisecondsConverter.Converter);
         }
 
+        /// <summary>
+        /// Object for performing Mobile Labs REST API requests.
+        /// </summary>
+        /// <param name="username">The username of the user to authenticate with.</param>
+        /// <param name="apikey">The API key for the user.</param>
+        /// <param name="serveraddress">The protocol and server address. Example: http://deviceConnect.server</param>
         public MobileLabsApi(string username, string apikey, string serveraddress)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -48,7 +60,8 @@ namespace MobileLabs.DeviceConnect.RestApi
             if (!serveraddress.StartsWith("http://") &&
                 !serveraddress.StartsWith("https://"))
             {
-                throw new ArgumentOutOfRangeException("serveraddress", serveraddress,
+                throw new ArgumentOutOfRangeException(
+                    "serveraddress", serveraddress,
                     "Expected protocol://address, example: http://deviceConnect.server");
             }
 
@@ -76,7 +89,7 @@ namespace MobileLabs.DeviceConnect.RestApi
                 CleanUrl(url, nameValueCollection)).ToString();
         }
 
-        public async Task<T> RequestAsync<T>(string url,
+        internal async Task<T> RequestAsync<T>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> nameValueCollection,
             bool isAsync,
             CancellationToken cancel)
@@ -90,12 +103,12 @@ namespace MobileLabs.DeviceConnect.RestApi
                     .GetAsync(CleanUrl(url, nameValueCollection), cancel))
                 {
                     return await HandleJsonResponseAsync<T>(
-                        response, isAsync, cancel);
+                        url, response, isAsync, cancel);
                 }
             }
         }
 
-        public T Request<T>(string url,
+        internal T Request<T>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> nameValueCollection,
             bool isAsync)
         {
@@ -105,49 +118,11 @@ namespace MobileLabs.DeviceConnect.RestApi
 
             using (var response = (HttpWebResponse)client.GetResponse())
             {
-                return HandleJsonResponse<T>(response, isAsync);
+                return HandleJsonResponse<T>(url, response, isAsync);
             }
         }
 
-        public async Task<T> PostAsync<T>(string url,
-            byte[] byteContent, bool isAsync, CancellationToken cancel)
-        {
-            using (var client = new HttpClient())
-            using (cancel.Register(DisposeHttpClient, client))
-            {
-                AddAuth(client);
-
-                using (var content = new ByteArrayContent(byteContent))
-                using (var response = await client
-                    .PostAsync(CleanUrl(url, null), content, cancel))
-                {
-                    return await HandleJsonResponseAsync<T>(
-                        response, isAsync, cancel);
-                }
-            }
-        }
-
-        public T Post<T>(string url, byte[] byteContent, bool isAsync)
-        {
-            var client = (HttpWebRequest)WebRequest.Create(BaseUrl(url, null));
-            AddAuth(client);
-
-            client.Method = "POST";
-            client.ContentType = "application/x-www-form-urlencoded";
-            client.ContentLength = byteContent.Length;
-
-            using (var requestStream = client.GetRequestStream())
-            {
-                requestStream.Write(byteContent, 0, byteContent.Length);
-            }
-
-            using (var response = (HttpWebResponse)client.GetResponse())
-            {
-                return HandleJsonResponse<T>(response, isAsync);
-            }
-        }
-
-        public async Task<T> PostAsync<T>(string url,
+        internal async Task<T> PostAsync<T>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> nameValueCollection,
             bool isAsync,
             CancellationToken cancel)
@@ -162,12 +137,12 @@ namespace MobileLabs.DeviceConnect.RestApi
                     .PostAsync(CleanUrl(url, null), content, cancel))
                 {
                     return await HandleJsonResponseAsync<T>(
-                        response, isAsync, cancel);
+                        url, response, isAsync, cancel);
                 }
             }
         }
 
-        public T Post<T>(string url,
+        internal T Post<T>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> nameValueCollection,
             bool isAsync)
         {
@@ -186,11 +161,26 @@ namespace MobileLabs.DeviceConnect.RestApi
 
             using (var response = (HttpWebResponse)client.GetResponse())
             {
-                return HandleJsonResponse<T>(response, isAsync);
+                return HandleJsonResponse<T>(url, response, isAsync);
             }
         }
 
-        public async Task<TOut> PostJsonAsync<TOut, TIn>(string url,
+        internal async Task PostAsync(string url,
+            IReadOnlyCollection<KeyValuePair<string, string>> nameValueCollection,
+            bool isAsync,
+            CancellationToken cancel)
+        {
+            await PostAsync<object>(url, nameValueCollection, isAsync, cancel);
+        }
+
+        internal void Post(string url,
+            IReadOnlyCollection<KeyValuePair<string, string>> nameValueCollection,
+            bool isAsync)
+        {
+            Post<object>(url, nameValueCollection, isAsync);
+        }
+
+        internal async Task PostJsonAsync<TIn>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> arguments,
             TIn content,
             bool isAsync,
@@ -207,13 +197,13 @@ namespace MobileLabs.DeviceConnect.RestApi
                 using (var response = await client
                     .PostAsync(CleanUrl(url, arguments), httpContent, cancel))
                 {
-                    return await HandleJsonResponseAsync<TOut>(
-                        response, isAsync, cancel);
+                    await HandleJsonResponseAsync<object>(
+                        url, response, isAsync, cancel);
                 }
             }
         }
 
-        public TOut PostJson<TOut, TIn>(string url,
+        internal void PostJson<TIn>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> arguments,
             TIn content,
             bool isAsync)
@@ -235,7 +225,7 @@ namespace MobileLabs.DeviceConnect.RestApi
 
             using (var response = (HttpWebResponse)client.GetResponse())
             {
-                return HandleJsonResponse<TOut>(response, isAsync);
+                HandleJsonResponse<object>(url, response, isAsync);
             }
         }
 
@@ -264,7 +254,7 @@ namespace MobileLabs.DeviceConnect.RestApi
             return form;
         }
 
-        public async Task<TOut> RequestJsonAsync<TOut>(string url,
+        internal async Task<TOut> RequestJsonAsync<TOut>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> arguments,
             Dictionary<string, string> content,
             bool isAsync,
@@ -281,12 +271,12 @@ namespace MobileLabs.DeviceConnect.RestApi
                     .GetAsync(CleanUrl(url, form), cancel))
                 {
                     return await HandleJsonResponseAsync<TOut>(
-                        response, isAsync, cancel);
+                        url, response, isAsync, cancel);
                 }
             }
         }
 
-        public TOut RequestJson<TOut>(string url,
+        internal TOut RequestJson<TOut>(string url,
             IReadOnlyCollection<KeyValuePair<string, string>> arguments,
             Dictionary<string, string> content,
             bool isAsync)
@@ -298,11 +288,11 @@ namespace MobileLabs.DeviceConnect.RestApi
 
             using (var response = (HttpWebResponse)client.GetResponse())
             {
-                return HandleJsonResponse<TOut>(response, isAsync);
+                return HandleJsonResponse<TOut>(url, response, isAsync);
             }
         }
 
-        public async Task<T> PostFileAsync<T>(
+        internal async Task<T> PostFileAsync<T>(
             string url, string filename, bool isAsync, CancellationToken cancel)
         {
             using (var fs = File.OpenRead(filename))
@@ -319,13 +309,13 @@ namespace MobileLabs.DeviceConnect.RestApi
                         .PostAsync(CleanUrl(url, null), httpContent, cancel))
                     {
                         return await HandleJsonResponseAsync<T>(
-                            response, isAsync, cancel);
+                            url, response, isAsync, cancel);
                     }
                 }
             }
         }
 
-        public T PostFile<T>(string url, string filename, bool isAsync)
+        internal T PostFile<T>(string url, string filename, bool isAsync)
         {
             var fileTask = PostFileAsync<T>(
                 url, filename, isAsync, CancellationToken.None);
@@ -342,15 +332,15 @@ namespace MobileLabs.DeviceConnect.RestApi
             return fileTask.Result;
         }
 
-        struct AsyncResponse
+        internal struct AsyncResponse
         {
             public Guid AsyncResponseId { get; set; }
         }
 
-        private static Guid ReadAsyncResponse(string responseBody)
+        private static Guid ReadAsyncResponse(string url, string responseBody)
         {
-            var asyncResponse = Deserialize<OperationResult<AsyncResponse>>(
-                responseBody);
+            var asyncResponse = JsonConvert.DeserializeObject<OperationResult<AsyncResponse>>(
+                responseBody, _jsonSettings);
 
             if (!asyncResponse.IsSuccess)
             {
@@ -361,11 +351,11 @@ namespace MobileLabs.DeviceConnect.RestApi
         }
 
         private static bool HandleAsyncStatus<T>(
-            AsyncStatusModel status, out T result)
+            AsyncStatusModel status, string url, out T result)
         {
             if (status.IsComplete)
             {
-                result = ((JObject)status.Data).ToObject<T>();
+                result = Deserialize<T>(url, (JToken)status.Data);
                 return true;
             }
 
@@ -374,6 +364,7 @@ namespace MobileLabs.DeviceConnect.RestApi
         }
 
         private async Task<T> HandleJsonResponseAsync<T>(
+            string url,
             HttpResponseMessage response,
             bool isAsync,
             CancellationToken cancel)
@@ -389,7 +380,7 @@ namespace MobileLabs.DeviceConnect.RestApi
 
             if (isAsync)
             {
-                var id = ReadAsyncResponse(responseBody);
+                var id = ReadAsyncResponse(url, responseBody);
 
                 while (true)
                 {
@@ -398,7 +389,7 @@ namespace MobileLabs.DeviceConnect.RestApi
                     var status = await this.GetAsyncAsync(id, cancel);
 
                     T output;
-                    if (HandleAsyncStatus(status, out output))
+                    if (HandleAsyncStatus(status, url, out output))
                     {
                         return output;
                     }
@@ -407,11 +398,11 @@ namespace MobileLabs.DeviceConnect.RestApi
                 }
             }
 
-            return Deserialize<T>(responseBody);
+            return Deserialize<T>(url, responseBody);
         }
 
         private T HandleJsonResponse<T>(
-            HttpWebResponse response, bool isAsync)
+            string url, HttpWebResponse response, bool isAsync)
         {
             using (var respStream = response.GetResponseStream())
             using (var readStream = new StreamReader(respStream, Encoding.UTF8))
@@ -427,14 +418,14 @@ namespace MobileLabs.DeviceConnect.RestApi
 
                 if (isAsync)
                 {
-                    var id = ReadAsyncResponse(responseBody);
+                    var id = ReadAsyncResponse(url, responseBody);
 
                     while (true)
                     {
                         var status = this.GetAsync(id);
 
                         T output;
-                        if (HandleAsyncStatus(status, out output))
+                        if (HandleAsyncStatus(status, url, out output))
                         {
                             return output;
                         }
@@ -443,7 +434,7 @@ namespace MobileLabs.DeviceConnect.RestApi
                     }
                 }
 
-                return Deserialize<T>(responseBody);
+                return Deserialize<T>(url, responseBody);
             }
         }
 
@@ -452,14 +443,69 @@ namespace MobileLabs.DeviceConnect.RestApi
             (client as HttpClient).Dispose();
         }
 
-        private static T Deserialize<T>(string input)
+        private static T Deserialize<T>(string url, string input)
         {
             if (typeof(T) == typeof(string))
             {
                 return (T)(object)input;
             }
 
-            return JsonConvert.DeserializeObject<T>(input, _jsonSettings);
+            var token = JsonConvert.DeserializeObject<JToken>(
+                input, _jsonSettings);
+
+            return Deserialize<T>(url, token);
+        }
+
+        private static T Deserialize<T>(string url, JToken token)
+        {
+            // Callers that do not want to deserialize can pass "object" for
+            // the type.
+            var shouldDeserialize = typeof(T) != typeof(object);
+
+            if (token.Type != JTokenType.Object)
+            {
+                return shouldDeserialize
+                    ? token.ToObject<T>(_jsonSerializer)
+                    : default(T);
+            }
+
+            var successToken = token["isSuccess"];
+
+            // Not an OperationResult, return it.
+            if (successToken == null ||
+                successToken.Type != JTokenType.Boolean)
+            {
+                return token.ToObject<T>(_jsonSerializer);
+            }
+
+            // Success.
+            if (successToken.Value<bool>())
+            {
+                if (!shouldDeserialize)
+                {
+                    return default(T);
+                }
+
+                var dataToken = token["data"];
+
+                // No nested data.
+                if (dataToken == null)
+                {
+                    return token.ToObject<T>(_jsonSerializer);
+                }
+
+                return dataToken.ToObject<T>(_jsonSerializer);
+            }
+
+            // Failure. Return message if present.
+            var messageToken = token["errorMessage"];
+
+            var message = messageToken != null &&
+                messageToken.Type == JTokenType.String
+                    ? messageToken.Value<string>()
+                    : ("Got error response from '" + url + "'");
+
+            throw new IOException(message);
         }
 
         private void AddAuth(HttpClient client)
@@ -561,7 +607,7 @@ namespace MobileLabs.DeviceConnect.RestApi
         #endregion
     }
 
-    public class TimeSpanAsMillisecondsConverter : JsonConverter
+    internal class TimeSpanAsMillisecondsConverter : JsonConverter
     {
         public static readonly TimeSpanAsMillisecondsConverter Converter =
             new TimeSpanAsMillisecondsConverter();

@@ -13,9 +13,18 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
 {
     public static class GatewayEndPoints
     {
-        public static Task<OperationResult> UpdateGatewayUsbHubAsync(this MobileLabsApi api, string id, int? usbHubPort, string usbHubPortState, CancellationToken cancel)
+        /// <summary>
+        /// Change the port state to usbHubPort for the port number given as
+        /// usbHubPort on the USB hub given as a serial number in id.
+        /// This is an async method and should only be called from an async method. For non-async code, use &apos;UpdateGatewayUsbHub&apos;.
+        /// </summary>
+        /// <param name="id">The serial number for the USB hub.</param>
+        /// <param name="usbHubPort">The numerical port number of the USB hub port to change.</param>
+        /// <param name="usbHubPortState">The state to transition the port to.</param>
+        /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public static Task UpdateGatewayUsbHubAsync(this MobileLabsApi api, string id, int? usbHubPort, string usbHubPortState, CancellationToken cancel)
         {
-            return api.PostAsync<OperationResult>("/Gateway/UsbHub",
+            return api.PostAsync("/Gateway/UsbHub",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
@@ -25,9 +34,17 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static Task<OperationResult> UpdateGatewayUsbHubAsync(this MobileLabsApi api, string id, string usbHubPortState, CancellationToken cancel)
+        /// <summary>
+        /// Change the port state to usbHubPort for the port number given as
+        /// usbHubPort on the USB hub given as a serial number in id.
+        /// This is an async method and should only be called from an async method. For non-async code, use &apos;UpdateGatewayUsbHub&apos;.
+        /// </summary>
+        /// <param name="id">The serial number for the USB hub.</param>
+        /// <param name="usbHubPortState">The state to transition the port to.</param>
+        /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public static Task UpdateGatewayUsbHubAsync(this MobileLabsApi api, string id, string usbHubPortState, CancellationToken cancel)
         {
-            return api.PostAsync<OperationResult>("/Gateway/UsbHub",
+            return api.PostAsync("/Gateway/UsbHub",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
@@ -36,9 +53,15 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static Task<OperationResult> RebootGatewayUsbHubAsync(this MobileLabsApi api, string id, CancellationToken cancel)
+        /// <summary>
+        /// Reboot a USB hub. This is a diagnostic action and should be rarely required.
+        /// This is an async method and should only be called from an async method. For non-async code, use &apos;RebootGatewayUsbHub&apos;.
+        /// </summary>
+        /// <param name="id">The serial number of the USB hub to reboot.</param>
+        /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public static Task RebootGatewayUsbHubAsync(this MobileLabsApi api, string id, CancellationToken cancel)
         {
-            return api.PostAsync<OperationResult>("/Gateway/UsbHub",
+            return api.PostAsync("/Gateway/UsbHub",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("action", "Reboot"),
                     new KeyValuePair<string, string>("id", id),
@@ -46,6 +69,11 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
+        /// <summary>
+        /// Fetch information about the attached device gateways and any associated USB hubs and their attached devices.
+        /// This is an async method and should only be called from an async method. For non-async code, use &apos;GetGateway&apos;.
+        /// </summary>
+        /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public static Task<GatewayDescription[]> GetGatewayAsync(this MobileLabsApi api, CancellationToken cancel)
         {
             return api.RequestAsync<GatewayDescription[]>("/Gateway",
@@ -55,9 +83,16 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 false, cancel);
         }
 
-        public static OperationResult UpdateGatewayUsbHub(this MobileLabsApi api, string id, int? usbHubPort, string usbHubPortState)
+        /// <summary>
+        /// Change the port state to usbHubPort for the port number given as
+        /// usbHubPort on the USB hub given as a serial number in id.
+        /// </summary>
+        /// <param name="id">The serial number for the USB hub.</param>
+        /// <param name="usbHubPort">The numerical port number of the USB hub port to change.</param>
+        /// <param name="usbHubPortState">The state to transition the port to.</param>
+        public static void UpdateGatewayUsbHub(this MobileLabsApi api, string id, int? usbHubPort, string usbHubPortState)
         {
-            return api.Post<OperationResult>("/Gateway/UsbHub",
+            api.Post("/Gateway/UsbHub",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
@@ -66,9 +101,15 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 }, false);
         }
 
-        public static OperationResult UpdateGatewayUsbHub(this MobileLabsApi api, string id, string usbHubPortState)
+        /// <summary>
+        /// Change the port state to usbHubPort for the port number given as
+        /// usbHubPort on the USB hub given as a serial number in id.
+        /// </summary>
+        /// <param name="id">The serial number for the USB hub.</param>
+        /// <param name="usbHubPortState">The state to transition the port to.</param>
+        public static void UpdateGatewayUsbHub(this MobileLabsApi api, string id, string usbHubPortState)
         {
-            return api.Post<OperationResult>("/Gateway/UsbHub",
+            api.Post("/Gateway/UsbHub",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
@@ -76,15 +117,18 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                 }, false);
         }
 
-        public static OperationResult RebootGatewayUsbHub(this MobileLabsApi api, string id)
+        /// <summary>Reboot a USB hub. This is a diagnostic action and should be rarely required.</summary>
+        /// <param name="id">The serial number of the USB hub to reboot.</param>
+        public static void RebootGatewayUsbHub(this MobileLabsApi api, string id)
         {
-            return api.Post<OperationResult>("/Gateway/UsbHub",
+            api.Post("/Gateway/UsbHub",
                 new KeyValuePair<string, string>[] {
                     new KeyValuePair<string, string>("action", "Reboot"),
                     new KeyValuePair<string, string>("id", id),
                 }, false);
         }
 
+        /// <summary>Fetch information about the attached device gateways and any associated USB hubs and their attached devices.</summary>
         public static GatewayDescription[] GetGateway(this MobileLabsApi api)
         {
             return api.Request<GatewayDescription[]>("/Gateway",

@@ -7,7 +7,6 @@
     <Configurations>Debug;Release</Configurations>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PackageId>MobileLabs.DeviceConnect.RestApi</PackageId>
-    <Version>8.1.4.0304-rc</Version>
     <RepositoryUrl>https://github.com/mobilelabsinc/MobileLabsApi</RepositoryUrl>
     <Copyright>Mobile Labs, LLC</Copyright>
     <Title>MobileLabsApi</Title>
@@ -17,9 +16,10 @@
       Suppress a warning about upcoming deprecation of PackageLicenseUrl. When embedding licenses are supported,
       replace PackageLicenseUrl with PackageLicenseExpression.
     -->
-    <NoWarn>$(NoWarn);NU5125</NoWarn>
+    <NoWarn>$(NoWarn);NU5125;CS1591;CS1573</NoWarn>
     <PackageProjectUrl>https://github.com/mobilelabsinc/MobileLabsApi</PackageProjectUrl>
     <PackageDescription>Client library for Mobile Labs GigaFox/deviceConnect REST API</PackageDescription>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release-OSX'">
     <TargetFramework>netcoreapp2.1</TargetFramework>
