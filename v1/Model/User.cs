@@ -34,5 +34,6 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.Model
         public string Password { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
+        public UserProperty[] Properties { get; set; }
     }
 }

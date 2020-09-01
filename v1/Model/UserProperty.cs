@@ -8,9 +8,9 @@ using System.Text;
 
 namespace MobileLabs.DeviceConnect.RestApi.v1.Model
 {
-    public class AppiumInformation
+    public class UserProperty
     {
-        public string Path { get; set; }
-        public string Version { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
     }
 }

@@ -248,7 +248,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
         /// <param name="id">The ID of the application to launch.</param>
         /// <param name="deviceId">The device to launch the application on.</param>
         /// <param name="startOnly">If set to true, no instrumentation is performed on the application.</param>
-        /// <param name="arguments">The arguments to send to &quot;am start&quot; on Android.</param>
+        /// <param name="arguments">The arguments to send to &quot;am start&quot; on Android, or the arguments to pass to the program on iOS.</param>
         /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public static Task LaunchApplicationAsync(this MobileLabsApi api, Guid id, string deviceId, bool startOnly, string arguments, CancellationToken cancel)
         {
@@ -456,7 +456,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
         /// <param name="id">The ID of the application to launch.</param>
         /// <param name="deviceId">The device to launch the application on.</param>
         /// <param name="startOnly">If set to true, no instrumentation is performed on the application.</param>
-        /// <param name="arguments">The arguments to send to &quot;am start&quot; on Android.</param>
+        /// <param name="arguments">The arguments to send to &quot;am start&quot; on Android, or the arguments to pass to the program on iOS.</param>
         public static void LaunchApplication(this MobileLabsApi api, Guid id, string deviceId, bool startOnly, string arguments)
         {
             api.Post("/Application",

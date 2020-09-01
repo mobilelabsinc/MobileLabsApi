@@ -16,6 +16,7 @@ namespace MobileLabs.DeviceConnect.RestApi
         public static string Version = "Version";
         public static string BuildVersion = "BuildVersion";
         public static string BuildVersionOrVersion = "BuildVersionOrVersion";
+        public static string UploadedVersionCounter = "UploadedVersionCounter";
         public static string OperatingSystem = "OperatingSystem";
         public static string MinimumOperatingSystemVersion = "MinimumOperatingSystemVersion";
         public static string ApplicationBlob = "ApplicationBlob";

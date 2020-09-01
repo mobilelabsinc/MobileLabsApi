@@ -14,7 +14,7 @@ The source code for the package available is available at
 
 The following is a simple walkthrough of using Visual Studio 2017 and the
 MobileLabsApi library to write a program that gets a list of devices from a
-GigaFox or deviceConnect server.
+GigaFox server.
 
 1. Launch Visual Studio 2017.
 

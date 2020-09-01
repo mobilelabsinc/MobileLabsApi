@@ -231,7 +231,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
         /// Update the state of a USB hub port. This allows alternative a device&apos;s USB hub port between disconnect, charging, and data modes.
         /// This is an async method and should only be called from an async method. For non-async code, use &apos;UpdateDeviceUsbPort&apos;.
         /// </summary>
-        /// <param name="id">The ID of the device&apos;s USB hub port to update.</param>
+        /// <param name="id">The ID of the device to update. If * is specified, then all devices are targeted.</param>
         /// <param name="usbHubPortState">The state to transition the USB hub port to.</param>
         /// <param name="cancel">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public static Task UpdateDeviceUsbPortAsync(this MobileLabsApi api, string id, string usbHubPortState, CancellationToken cancel)
@@ -241,6 +241,29 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
                     new KeyValuePair<string, string>("usbHubPortState", usbHubPortState),
+                },
+                false, cancel);
+        }
+
+        public static Task UpdateDeviceWifiEnableAsync(this MobileLabsApi api, string id, bool enabled, CancellationToken cancel)
+        {
+            return api.PostAsync("/Device/WifiEnable",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("update", ""),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("enabled", enabled.ToString()),
+                },
+                false, cancel);
+        }
+
+        public static Task UpdateDeviceWifiConnectAsync(this MobileLabsApi api, string id, string ssid, string passphrase, CancellationToken cancel)
+        {
+            return api.PostAsync("/Device/WifiConnect",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("update", ""),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("ssid", ssid),
+                    new KeyValuePair<string, string>("passphrase", passphrase),
                 },
                 false, cancel);
         }
@@ -379,7 +402,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
         /// This is an async method and should only be called from an async method. For non-async code, use &apos;StopMarkerDeviceMetrics&apos;.
         /// </summary>
         /// <param name="id">
-        /// deviceConnect ID,
+        /// GigaFox ID,
         /// serial number, or
         /// vendor ID
         /// </param>
@@ -401,7 +424,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
         /// This is an async method and should only be called from an async method. For non-async code, use &apos;EnabledDeviceMetrics&apos;.
         /// </summary>
         /// <param name="id">
-        /// deviceConnect ID,
+        /// GigaFox ID,
         /// serial number, or
         /// vendor ID
         /// </param>
@@ -697,7 +720,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
         }
 
         /// <summary>Update the state of a USB hub port. This allows alternative a device&apos;s USB hub port between disconnect, charging, and data modes.</summary>
-        /// <param name="id">The ID of the device&apos;s USB hub port to update.</param>
+        /// <param name="id">The ID of the device to update. If * is specified, then all devices are targeted.</param>
         /// <param name="usbHubPortState">The state to transition the USB hub port to.</param>
         public static void UpdateDeviceUsbPort(this MobileLabsApi api, string id, string usbHubPortState)
         {
@@ -706,6 +729,27 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
                     new KeyValuePair<string, string>("update", ""),
                     new KeyValuePair<string, string>("id", id),
                     new KeyValuePair<string, string>("usbHubPortState", usbHubPortState),
+                }, false);
+        }
+
+        public static void UpdateDeviceWifiEnable(this MobileLabsApi api, string id, bool enabled)
+        {
+            api.Post("/Device/WifiEnable",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("update", ""),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("enabled", enabled.ToString()),
+                }, false);
+        }
+
+        public static void UpdateDeviceWifiConnect(this MobileLabsApi api, string id, string ssid, string passphrase)
+        {
+            api.Post("/Device/WifiConnect",
+                new KeyValuePair<string, string>[] {
+                    new KeyValuePair<string, string>("update", ""),
+                    new KeyValuePair<string, string>("id", id),
+                    new KeyValuePair<string, string>("ssid", ssid),
+                    new KeyValuePair<string, string>("passphrase", passphrase),
                 }, false);
         }
 
@@ -832,7 +876,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
 
         /// <summary>End the metrics marker of the same name for the same device as passed to startmarker.</summary>
         /// <param name="id">
-        /// deviceConnect ID,
+        /// GigaFox ID,
         /// serial number, or
         /// vendor ID
         /// </param>
@@ -849,7 +893,7 @@ namespace MobileLabs.DeviceConnect.RestApi.v1.EndPoint
 
         /// <summary>Enable or disable passive metric logging for a device. By default, all devices have passive logging enabled. It&apos;s recommended that this be turned off if the performance overhead on the device is detrimental to testing.</summary>
         /// <param name="id">
-        /// deviceConnect ID,
+        /// GigaFox ID,
         /// serial number, or
         /// vendor ID
         /// </param>

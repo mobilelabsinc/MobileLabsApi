@@ -64,6 +64,7 @@ namespace MobileLabs.DeviceConnect.RestApi
         UserCreated = 201,
         ServerStarting = 300,
         ServerRestarting = 301,
+        SharedViewOnlySessionCreated = 400,
         Note = 900,
     }
 
